@@ -2,55 +2,43 @@ import requests as r
 
 #id, key
 auth = ('b67d3b8c','0e985ceeeb7bcc4f7d5963fe118bf7e7')
-search = ''
-fields = {'uri':False,
-                  'label':False,
-                  'image':False,
-                  'images':False,
-                  'source':False,
-                  'url':False,
-                  'shareAs':False,
-                  'yield':False,
-                  'dietLabels':False,
-                  'healthLabels':False,
-                  'cautions':False,
-                  'ingredientLines':False,
-                  'ingredients':False,
-                  'calories':False,
-                  'gylcemicIndex':False,
-                  'inflammatoryIndex':False,
-                  'totalCO2Emissions':False,
-                  'co2EmissionsClass':False,
-                  'totalWeight':False,
-                  'totalTime':False,
-                  'cuisineType':False,
-                  'mealType':False,
-                  'dishType':False,
-                  'totalNutrients':False,
-                  'totalDaily':False,
-                  'digest':False,
-                  'tags':False,
-                  'externalId':False}
-def nextLine():
-    print('\n')
+#I only included relevant fields
+fields = {  'ingredientLines':False,
+            'ingredients':False,
+            'calories':False,
+            'cuisineType':False,
+            'mealType':False,
+            'dishType':False,
+            'totalNutrients':False}
 
 def printFields():
-    parameters = fields.keys()
-    for i in parameters:
+    for i in fields.keys():
         print('{key} - {value}'.format(key=i,value=fields[i]))
-    nextLine()
 
-def toggleFields(inputKey):
-    if inputKey not in fields:
-        print('{key} parameter does not exist'.format(inputKey))
+def selectField(inputKey):
+    if inputKey not in fields.keys():
+        print('\n"{key}" parameter does not exist\n'.format(key=inputKey))
         return
-    if fields[inputKey] == False:
-        fields.update({inputKey:True})
+    elif fields[inputKey]==True:
+        print('\n"{key}" parameter already selected\n'.format(key=inputKey))
+        return
     else:
-        fields.update({inputKey:False})
-    print('"{key}" parameter set to {value}'.format(key=inputKey,value=fields[inputKey]))
-    nextLine()
+        for i in fields.keys():
+            fields.update({i:False})
+        fields.update({inputKey:True})
+        print('\n"{key}" parameter selected\n'.format(key=inputKey))
 
-printFields()
-toggleFields('shareAs')
-printFields()
+def requestRecipies(searchKey=None):
+    if searchKey==None:
+        print('\nNo search key\n')
+        return
+    else:
+        for i in fields.keys():
+            if fields[i]==True:
+                active = i
+    accessPoint = 'https://api.edamam.com/api/recipes/v2?type=public&q={search}&app_id={appId}&app_key={appKey}&field={parameters}'.format(search=searchKey,appId=auth[0],appKey=auth[1],fields=active)
+    req = r.get(url=accessPoint)
+    return req.text
+
+f = open('recipedata.txt')
+
