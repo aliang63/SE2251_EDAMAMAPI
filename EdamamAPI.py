@@ -2,7 +2,7 @@ import requests as r
 
 #id, key
 auth = ('b67d3b8c','0e985ceeeb7bcc4f7d5963fe118bf7e7')
-#I only included relevant fields
+#relevant fields
 fields = {  'ingredientLines':False,
             'ingredients':False,
             'calories':False,
@@ -16,6 +16,7 @@ def printFields():
         print('{key} - {value}'.format(key=i,value=fields[i]))
 
 def selectField(inputKey):
+    #catch + execute
     if inputKey not in fields.keys():
         print('\n"{key}" parameter does not exist\n'.format(key=inputKey))
         return
@@ -23,22 +24,43 @@ def selectField(inputKey):
         print('\n"{key}" parameter already selected\n'.format(key=inputKey))
         return
     else:
+        #resets selection
         for i in fields.keys():
             fields.update({i:False})
+        #selection
         fields.update({inputKey:True})
         print('\n"{key}" parameter selected\n'.format(key=inputKey))
 
 def requestRecipies(searchKey=None):
-    if searchKey==None:
-        print('\nNo search key\n')
-        return
-    else:
+    #helper
+    def initializeAccessPoint():
+        active = None
+        #find parameters
         for i in fields.keys():
             if fields[i]==True:
                 active = i
-    accessPoint = 'https://api.edamam.com/api/recipes/v2?type=public&q={search}&app_id={appId}&app_key={appKey}&field={parameters}'.format(search=searchKey,appId=auth[0],appKey=auth[1],fields=active)
-    req = r.get(url=accessPoint)
-    return req.text
+        #catch + execute
+        if searchKey==None:
+            print('\nNo search key\n')
+            return
+        elif active==None:
+            print('\nNo parameters\n')
+            return
+        else:
+            accessPoint = 'https://api.edamam.com/api/recipes/v2?type=public&q={search}&app_id={appId}&app_key={appKey}&field={parameters}'.format(search=searchKey,appId=auth[0],appKey=auth[1],fields=active)
+        return accessPoint
+    accessPoint = initializeAccessPoint()
+    if accessPoint==None:
+        return 'n/a'
+    else:
+        return r.get(accessPoint).text
 
-f = open('recipedata.txt')
+def requestSavedRecipies():
+    return
+t = requestRecipies()
+print(t)
+
+#f = open('recipedata.txt','w')
+#f.write(requestRecipies('chicken'))
+#f.close()
 
