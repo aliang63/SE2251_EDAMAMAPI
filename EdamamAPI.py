@@ -3,7 +3,7 @@
 import requests as r
 
 #id, key
-auth = ('b67d3b8c','0e985ceeeb7bcc4f7d5963fe118bf7e7') #incase of api limit
+auth = ('','') #incase of api limit
 
 #intializes the access point
 def __initializeAccessPoint(searchKey=None):
